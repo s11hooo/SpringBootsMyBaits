@@ -1,0 +1,4 @@
+package kopo.poly2.service;
+
+public interface iFoodService {
+}
