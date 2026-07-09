@@ -1,4 +1,4 @@
-package kopo.poly2.service.impl;
+package kopo.poly2.service;
 
 public interface iPapagoService {
 }
