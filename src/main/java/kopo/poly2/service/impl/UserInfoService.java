@@ -6,6 +6,7 @@ import kopo.poly2.mapper.iUserInfoMapper;
 import kopo.poly2.service.iMailService;
 import kopo.poly2.service.iUserInfoService;
 import kopo.poly2.utill.CmmUtill;
+import kopo.poly2.utill.DateUtill;
 import kopo.poly2.utill.EncryptUtill;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -124,5 +125,53 @@ public class UserInfoService implements iUserInfoService {
         log.info("{}.insertUserInfo End!", this.getClass().getName());
 
         return res;
+    }
+    @Override
+    public UserInfoDTO getLogin(UserInfoDTO pDTO) throws Exception {
+
+        log.info("{}.getLogin Start!", this.getClass().getName());
+
+        UserInfoDTO rDTO = Optional.ofNullable(userInfoMapper.getLogin(pDTO))
+                .orElseGet(UserInfoDTO::new);
+
+        if (!CmmUtill.nvl(rDTO.getUserId()).isEmpty()) {
+
+            MailDTO mDTO = new MailDTO();
+
+            mDTO.setToMail(
+                    EncryptUtill.decAES128CBC(CmmUtill.nvl(rDTO.getEmail()))
+            );
+
+            mDTO.setTitle("로그인 알림");
+
+            mDTO.setContents(
+                    DateUtill.getDateTime("yyyy.MM.dd hh:mm:ss")
+                            + "에 "
+                            + CmmUtill.nvl(rDTO.getUserName())
+                            + "님이 로그인하였습니다."
+            );
+
+            mailService.doSendMail(mDTO);
+        }
+
+        log.info("{}.getLogin End!", this.getClass().getName());
+
+        return rDTO;
+    }
+
+    @Override
+    public UserInfoDTO searchUserIdOrPasswordProc(UserInfoDTO pDTO) throws Exception {
+        log.info("{}.searchUserIdOrPasswordProc Start!", this.getClass().getName());
+
+        UserInfoDTO rDTO = userInfoMapper.getUserId(pDTO);
+
+        log.info("{}.searchUserIdOrPasswordProc End!", this.getClass().getName());
+
+        return rDTO;
+    }
+
+    @Override
+    public void newPasswordProc(UserInfoDTO pDTO) {
+
     }
 }

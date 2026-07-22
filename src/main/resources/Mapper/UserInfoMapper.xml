@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- JAVA와 연결할 Mapper 파일 설정 -->
-<mapper namespace="kopo.poly.persistence.mapper.IUserInfoMapper">
+<mapper namespace="kopo.poly2.mapper.iUserInfoMapper">
 
     <!-- 회원 가입 전 아이디 중복체크하기 -->
     <select id="getUserIdExists"
@@ -61,5 +61,32 @@
             )
 
     </insert>
+    <select id="getLogin" parameterType="UserInfoDTO" resultType="UserInfoDTO">
+            SELECT USER_ID, USER_NAME, EMAIL
+            FROM USER_INFO
+            WHERE USER_ID = #{userId}
+                AND PASSWORD = #{password}
+    </select>
 
+    <select id="getUserId"
+            parameterType="UserInfoDTO"
+            resultType="UserInfoDTO">
+
+        SELECT
+        USER_ID,
+        USER_NAME,
+        EMAIL
+        FROM USER_INFO
+        WHERE 1=1
+
+        <if test="userId neq null and userId neq ''">
+            AND USER_ID = #{userId}
+        </if>
+
+        AND USER_NAME = #{userName}
+        AND EMAIL = #{email}
+
+    </select>
 </mapper>
+
+
