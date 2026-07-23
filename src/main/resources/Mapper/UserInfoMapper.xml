@@ -87,6 +87,12 @@
         AND EMAIL = #{email}
 
     </select>
+
+    <update id="updatePassword" parameterType="UserInfoDTO">
+        UPDATE USER_INFO
+        SET PASSWORD = #{password}
+        WHERE USER_ID = #{userId}
+    </update>
 </mapper>
 
 

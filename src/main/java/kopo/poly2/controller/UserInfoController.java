@@ -508,4 +508,5 @@ public class UserInfoController {
         return "user/newPasswordResult";
 
     }
+
 }

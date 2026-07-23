@@ -13,9 +13,9 @@ public interface iUserInfoService {
     // 회원 가입하기(회원정보 등록하기)
     int insertUserInfo(UserInfoDTO pDTO) throws Exception;
 
-    void newPasswordProc(UserInfoDTO pDTO);
-
     UserInfoDTO getLogin(UserInfoDTO pDTO) throws Exception;
 
     UserInfoDTO searchUserIdOrPasswordProc(UserInfoDTO pDTO) throws Exception;
+
+    int newPasswordProc(UserInfoDTO pDTO) throws Exception;
 }
