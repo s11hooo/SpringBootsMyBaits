@@ -1,8 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="kopo.poly.util.CmmUtil" %>
+<%@ page import="kopo.poly2.utill.CmmUtill" %>
 
 <%
-        String msg = CmmUtil.nvl((String) request.getAttribute("msg"));
+        String msg = CmmUtill.nvl((String) request.getAttribute("msg"));
         %>
 
         <!DOCTYPE html>
