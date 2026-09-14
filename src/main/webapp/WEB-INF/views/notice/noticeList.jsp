@@ -1,18 +1,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>공지사항 목록</title>
-    <link rel="stylesheet" href="/resources/css/notice.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="/css/notice.css">
 </head>
 <body>
 
 <div class="tbl_wrap">
+    <h2>공지사항 목록</h2>
 
     <div class="btn_write">
-        <a href="/notice/noticereg">글쓰기</a>
+        <a href="/notice/noticeReg">글쓰기</a>
     </div>
 
     <table class="tbl_head01">
@@ -30,12 +31,12 @@
         <c:forEach var="dto" items="${rList}" varStatus="status">
             <tr>
                 <td>${status.count}</td>
-                <td>
+                <td class="left">
                     <a href="/notice/noticeInfo?nSeq=${dto.noticeSeq}">
-                        <c:if test="${dto.noticeYn == 'Y'}">
+                        <c:if test="${dto.noticeYn eq 'Y'}">
                             <span class="notice_yn">[공지]</span>
                         </c:if>
-                            ${dto.title}
+                        ${dto.title}
                     </a>
                 </td>
                 <td>${dto.userName}</td>
@@ -50,7 +51,6 @@
         </c:if>
         </tbody>
     </table>
-
 </div>
 
 </body>
