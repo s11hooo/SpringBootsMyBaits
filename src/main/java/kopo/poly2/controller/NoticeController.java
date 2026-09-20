@@ -27,7 +27,7 @@ public class NoticeController {
 
     private final iNoticeService noticeService;
 
-    @GetMapping(value = {"noticeList", "noticelist"})
+    @GetMapping(value = {"noticeList", "NoticeList", "noticelist"})
     public String noticeList(HttpSession session, ModelMap model) throws Exception {
         log.info("{}.noticeList Start!", this.getClass().getName());
 
@@ -43,7 +43,7 @@ public class NoticeController {
         return "notice/noticeList";
     }
 
-    @GetMapping(value = {"noticeReg", "noticereg"})
+    @GetMapping(value = {"noticeReg", "NoticeReg", "noticereg"})
     public String noticeReg() throws Exception {
         log.info("{}.noticeReg Start!", this.getClass().getName());
         log.info("{}.noticeReg End!", this.getClass().getName());
@@ -89,7 +89,7 @@ public class NoticeController {
         return dto;
     }
 
-    @GetMapping(value = "noticeInfo")
+    @GetMapping(value = {"noticeInfo", "NoticeInfo"})
     public String noticeInfo(HttpServletRequest request, ModelMap model) throws Exception {
         log.info("{}.noticeInfo Start!", this.getClass().getName());
 
@@ -109,7 +109,7 @@ public class NoticeController {
         return "notice/noticeInfo";
     }
 
-    @GetMapping(value = "noticeEditInfo")
+    @GetMapping(value = {"noticeEditInfo", "NoticeEditInfo"})
     public String noticeEditInfo(HttpServletRequest request, ModelMap model) throws Exception {
         log.info("{}.noticeEditInfo Start!", this.getClass().getName());
 

@@ -17,7 +17,7 @@
     <insert id="insertNoticeInfo" parameterType="NoticeDTO">
         INSERT INTO NOTICE
         (
-            NOTICE_SEQ, TITLE, NOTICE_YN, CONTENTS, USER_ID, READ_CNT,
+            NOTICE_SEQ, TITLE, NOTICE_YN, CONTENT, USER_ID, READ_CNT,
             REG_ID, REG_DT, CHG_ID, CHG_DT
         )
         VALUES
@@ -31,7 +31,7 @@
     <!-- 공지사항 상세 조회 -->
     <select id="getNoticeInfo" resultType="NoticeDTO">
         SELECT N.NOTICE_SEQ, N.TITLE, N.NOTICE_YN, N.READ_CNT, U.USER_NAME, N.USER_ID,
-               N.CONTENTS, DATE_FORMAT(N.REG_DT, '%Y-%m-%d') AS REG_DT
+               N.CONTENT AS CONTENTS, DATE_FORMAT(N.REG_DT, '%Y-%m-%d') AS REG_DT
         FROM NOTICE N, USER_INFO U
         WHERE N.USER_ID = U.USER_ID
           AND N.NOTICE_SEQ = #{noticeSeq}
@@ -49,7 +49,7 @@
         UPDATE NOTICE
         SET TITLE = #{title},
             NOTICE_YN = #{noticeYn},
-            CONTENTS = #{contents},
+            CONTENT = #{contents},
             CHG_ID = #{userId},
             CHG_DT = NOW()
         WHERE NOTICE_SEQ = #{noticeSeq}

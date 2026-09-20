@@ -1,114 +1,133 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="kopo.poly2.dto.NoticeDTO" %>
+<%@ page import="kopo.poly2.utill.CmmUtill" %>
+<%
+    NoticeDTO rDTO = (NoticeDTO) request.getAttribute("rDTO");
+    if (rDTO == null) {
+        rDTO = new NoticeDTO();
+    }
+%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>공지사항 수정</title>
-    <link rel="stylesheet" href="/css/notice.css">
-    <script src="/js/jquery-3.6.0.min.js"></script>
-    <script>
+    <title>공지사항 수정하기</title>
+    <link rel="stylesheet" href="/css/table.css"/>
+    <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
         $(document).ready(function () {
-            $("#titleByte").text(getByteLength($("#title").val()) + " / 200 byte");
-            $("#contentsByte").text(getByteLength($("#contents").val()) + " / 4000 byte");
-
-            $("#title").on("keyup", function () {
-                $("#titleByte").text(getByteLength($(this).val()) + " / 200 byte");
-            });
-
-            $("#contents").on("keyup", function () {
-                $("#contentsByte").text(getByteLength($(this).val()) + " / 4000 byte");
-            });
-
-            $("#btnUpdate").on("click", function () {
-                if ($("#title").val().length === 0) {
-                    alert("제목을 입력하세요.");
-                    $("#title").focus();
-                    return false;
-                }
-
-                if ($("#contents").val().length === 0) {
-                    alert("내용을 입력하세요.");
-                    $("#contents").focus();
-                    return false;
-                }
-
-                $.ajax({
-                    url: "/notice/noticeUpdate",
-                    type: "POST",
-                    data: $("#f").serialize(),
-                    dataType: "json",
-                    success: function (json) {
-                        alert(json.msg);
-                        if (json.msg === "수정되었습니다.") {
-                            location.href = "/notice/noticeInfo?nSeq=${rDTO.noticeSeq}";
-                        }
-                    },
-                    error: function () {
-                        alert("오류가 발생했습니다.");
-                    }
-                });
-            });
-
-            $("#btnList").on("click", function () {
-                location.href = "/notice/noticeList";
+            $("#btnSend").on("click", function () {
+                doSubmit();
             });
         });
 
-        function getByteLength(str) {
-            var byte = 0;
-            for (var i = 0; i < str.length; i++) {
-                byte += (str.charCodeAt(i) > 127) ? 3 : 1;
+        function calBytes(str) {
+            let tcount = 0;
+            let tmpStr = String(str);
+            let strCnt = tmpStr.length;
+            let onechar;
+            for (let i = 0; i < strCnt; i++) {
+                onechar = tmpStr.charAt(i);
+                if (escape(onechar).length > 4) {
+                    tcount += 2;
+                } else {
+                    tcount += 1;
+                }
             }
-            return byte;
+            return tcount;
+        }
+
+        function doSubmit() {
+            let f = document.getElementById("f");
+
+            if (f.title.value === "") {
+                alert("제목을 입력하시기 바랍니다.");
+                f.title.focus();
+                return;
+            }
+
+            if (calBytes(f.title.value) > 200) {
+                alert("최대 200Bytes까지 입력 가능합니다.");
+                f.title.focus();
+                return;
+            }
+
+            let noticeCheck = false;
+            for (let i = 0; i < f.noticeYn.length; i++) {
+                if (f.noticeYn[i].checked) {
+                    noticeCheck = true;
+                    break;
+                }
+            }
+
+            if (noticeCheck === false) {
+                alert("공지글 여부를 선택하시기 바랍니다.");
+                f.noticeYn[0].focus();
+                return;
+            }
+
+            if (f.contents.value === "") {
+                alert("내용을 입력하시기 바랍니다.");
+                f.contents.focus();
+                return;
+            }
+
+            if (calBytes(f.contents.value) > 4000) {
+                alert("최대 4000Bytes까지 입력 가능합니다.");
+                f.contents.focus();
+                return;
+            }
+
+            $.ajax({
+                url: "/notice/noticeUpdate",
+                type: "post",
+                dataType: "JSON",
+                data: $("#f").serialize(),
+                success: function (json) {
+                    alert(json.msg);
+                    location.href = "/notice/noticeList";
+                }
+            });
         }
     </script>
 </head>
 <body>
-
-<div class="tbl_wrap">
-    <h2>공지사항 수정</h2>
-
-    <form id="f">
-        <input type="hidden" name="nSeq" value="${rDTO.noticeSeq}">
-
-        <table class="tbl_row01">
-            <caption>공지사항 수정</caption>
-            <tr>
-                <th>제목</th>
-                <td>
-                    <input type="text" id="title" name="title" value="${rDTO.title}" maxlength="200">
-                    <div class="byte_cnt"><span id="titleByte">0 / 200 byte</span></div>
-                </td>
-            </tr>
-            <tr>
-                <th>공지글 여부</th>
-                <td>
-                    <label>
-                        <input type="radio" name="noticeYn" value="Y" <c:if test="${rDTO.noticeYn eq 'Y'}">checked</c:if>>
-                        공지
-                    </label>
-                    <label>
-                        <input type="radio" name="noticeYn" value="N" <c:if test="${rDTO.noticeYn ne 'Y'}">checked</c:if>>
-                        일반
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <th>내용</th>
-                <td>
-                    <textarea id="contents" name="contents">${rDTO.contents}</textarea>
-                    <div class="byte_cnt"><span id="contentsByte">0 / 4000 byte</span></div>
-                </td>
-            </tr>
-        </table>
-    </form>
-
-    <div class="btn_wrap">
-        <input type="button" id="btnUpdate" value="수정">
-        <input type="button" id="btnList" value="목록">
+<h2>공지사항 수정하기</h2>
+<hr/>
+<br/>
+<form name="f" id="f">
+    <input type="hidden" name="nSeq" value="<%=CmmUtill.nvl(request.getParameter("nSeq"))%>"/>
+    <div class="divTable minimalistBlack">
+        <div class="divTableBody">
+            <div class="divTableRow">
+                <div class="divTableCell">제목</div>
+                <div class="divTableCell">
+                    <input type="text" name="title" maxlength="100" style="width: 95%" value="<%=CmmUtill.nvl(rDTO.getTitle())%>"/>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">공지글 여부</div>
+                <div class="divTableCell">
+                    예 <input type="radio" name="noticeYn" value="Y" <%=CmmUtill.checked(CmmUtill.nvl(rDTO.getNoticeYn()), "Y")%>/>
+                    아니오 <input type="radio" name="noticeYn" value="N" <%=CmmUtill.checked(CmmUtill.nvl(rDTO.getNoticeYn()), "N")%>/>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">조회수</div>
+                <div class="divTableCell"><%=CmmUtill.nvl(rDTO.getReadCnt())%></div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">내용</div>
+                <div class="divTableCell">
+                    <textarea name="contents" style="width: 95%; height: 300px"><%=CmmUtill.nvl(rDTO.getContents())%></textarea>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-
+    <div>
+        <button id="btnSend" type="button">수정</button>
+        <button type="reset">다시 작성</button>
+    </div>
+</form>
 </body>
 </html>

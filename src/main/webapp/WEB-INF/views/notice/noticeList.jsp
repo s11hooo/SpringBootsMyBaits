@@ -1,57 +1,69 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Optional" %>
+<%@ page import="kopo.poly2.dto.NoticeDTO" %>
+<%@ page import="kopo.poly2.utill.CmmUtill" %>
+<%
+    List<NoticeDTO> rList = Optional.ofNullable((List<NoticeDTO>) request.getAttribute("rList"))
+            .orElseGet(java.util.ArrayList::new);
+%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>공지사항 목록</title>
-    <link rel="stylesheet" href="/css/notice.css">
+    <title>공지사항 리스트</title>
+    <link rel="stylesheet" href="/css/table.css"/>
+    <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnReg").on("click", function () {
+                location.href = "/notice/noticeReg";
+            });
+        });
+    </script>
 </head>
 <body>
+<h2>공지사항 리스트</h2>
+<hr/>
+<br/>
 
-<div class="tbl_wrap">
-    <h2>공지사항 목록</h2>
-
-    <div class="btn_write">
-        <a href="/notice/noticeReg">글쓰기</a>
+<div class="divTable minimalistBlack">
+    <div class="divTableHeading">
+        <div class="divTableRow">
+            <div class="divTableHead">순번</div>
+            <div class="divTableHead">제목</div>
+            <div class="divTableHead">공지글 여부</div>
+            <div class="divTableHead">조회수</div>
+            <div class="divTableHead">등록자</div>
+            <div class="divTableHead">등록일</div>
+        </div>
     </div>
-
-    <table class="tbl_head01">
-        <caption>공지사항 목록</caption>
-        <thead>
-        <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성자</th>
-            <th>조회수</th>
-            <th>등록일</th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach var="dto" items="${rList}" varStatus="status">
-            <tr>
-                <td>${status.count}</td>
-                <td class="left">
-                    <a href="/notice/noticeInfo?nSeq=${dto.noticeSeq}">
-                        <c:if test="${dto.noticeYn eq 'Y'}">
-                            <span class="notice_yn">[공지]</span>
-                        </c:if>
-                        ${dto.title}
-                    </a>
-                </td>
-                <td>${dto.userName}</td>
-                <td>${dto.readCnt}</td>
-                <td>${dto.regDt}</td>
-            </tr>
-        </c:forEach>
-        <c:if test="${empty rList}">
-            <tr>
-                <td colspan="5">등록된 공지사항이 없습니다.</td>
-            </tr>
-        </c:if>
-        </tbody>
-    </table>
+    <div class="divTableBody">
+        <%
+            for (int i = 0; i < rList.size(); i++) {
+                NoticeDTO rDTO = rList.get(i);
+                if (rDTO == null) {
+                    rDTO = new NoticeDTO();
+                }
+        %>
+        <div class="divTableRow">
+            <div class="divTableCell"><%=i + 1%></div>
+            <div class="divTableCell">
+                <a href="/notice/noticeInfo?nSeq=<%=CmmUtill.nvl(rDTO.getNoticeSeq())%>">
+                    <%=CmmUtill.nvl(rDTO.getTitle())%>
+                </a>
+            </div>
+            <div class="divTableCell"><%=CmmUtill.nvl(rDTO.getNoticeYn())%></div>
+            <div class="divTableCell"><%=CmmUtill.nvl(rDTO.getReadCnt())%></div>
+            <div class="divTableCell"><%=CmmUtill.nvl(rDTO.getUserName())%></div>
+            <div class="divTableCell"><%=CmmUtill.nvl(rDTO.getRegDt())%></div>
+        </div>
+        <%
+            }
+        %>
+    </div>
 </div>
-
+<br/>
+<button id="btnReg" type="button">등록</button>
 </body>
 </html>
