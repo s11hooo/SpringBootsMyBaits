@@ -1,33 +1,29 @@
 package kopo.poly2.utill;
 
-import java.util.Objects;
-
 public class CmmUtill {
-
     public static String nvl(String str, String chg_str) {
-        return (str == null || str.isEmpty()) ? chg_str : str;
-    }
+        String res;
 
-    public static String nvl(String str) {
-        return nvl(str, "");
-    }
-
-    public static String checked(String str, String com_str) {
-        return Objects.equals(str, com_str) ? " checked" : "";
-    }
-
-    public static String checked(String[] str, String com_str) {
-        if (str == null) return ""; // null 방어
-
-        for (String s : str) {
-            if (Objects.equals(s, com_str)) {
-                return " checked";
-            }
+        if (str == null) {
+            res = chg_str;
+        } else if (str.isEmpty()) {
+            res = chg_str;
+        } else {
+            res = str;
         }
-        return "";
+        return res;
     }
 
-    public static String select(String str, String com_str) {
-        return Objects.equals(str, com_str) ? " selected" : "";
+    public static String nvl(String str){
+        return nvl(str,"");
     }
+
+    public static String checked(String str, String com_str){
+        if(str.equals(com_str)){
+            return " checked";
+        }else{
+            return "";
+        }
+    }
+
 }
