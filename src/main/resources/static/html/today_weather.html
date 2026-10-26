@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>날씨 조회</title>
+<style>body{font-family:system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 20px}input,button{font:inherit;padding:8px}label{display:inline-block;margin:6px}table{border-collapse:collapse;width:100%;margin-top:24px}th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}#status{min-height:24px}caption{text-align:left;font-weight:bold;padding:12px 0}</style></head>
+<body><h1>현재 날씨와 일별 예보</h1>
+<form id="weatherForm"><label>위도 <input id="lat" type="number" step="any" min="-90" max="90" value="37.544" required></label>
+<label>경도 <input id="lon" type="number" step="any" min="-180" max="180" value="126.836" required></label><button id="load">날씨 조회</button></form>
+<p>같은 지역의 날씨는 10분 동안 캐시에서 가져옵니다. 기온 단위는 °C입니다.</p>
+<p id="status" role="status"></p><h2 id="current"></h2><p id="observed"></p>
+<table><caption>일별 예보</caption><thead><tr><th>날짜</th><th>낮 기온</th><th>최저</th><th>최고</th><th>일출</th><th>일몰</th></tr></thead><tbody id="daily"></tbody></table>
+<script>
+const form=document.getElementById('weatherForm');
+async function loadWeather(event){
+ if(event)event.preventDefault();
+ const status=document.getElementById('status'),button=document.getElementById('load');
+ status.textContent='날씨를 조회하고 있습니다.';button.disabled=true;
+ document.getElementById('current').textContent='';document.getElementById('observed').textContent='';document.getElementById('daily').replaceChildren();
+ try{
+  const query=new URLSearchParams({lat:document.getElementById('lat').value,lon:document.getElementById('lon').value});
+  const response=await fetch('/weather/getWeather?'+query,{signal:AbortSignal.timeout(20000)});
+  if(!response.ok){
+   let message=response.status===503?'서버에 WEATHER_API_KEY를 설정해 주세요.':response.status===502?'날씨 API 연결에 실패했습니다. API 키와 One Call 이용 권한을 확인해 주세요.':'날씨 조회에 실패했습니다. 입력한 좌표를 확인해 주세요.';
+   throw new Error(message);
+  }
+  const weather=await response.json();document.getElementById('current').textContent='현재 기온: '+weather.temp+' °C';
+  document.getElementById('observed').textContent='관측: '+weather.dt+' ('+weather.timezone+')';
+  for(const day of weather.dailyList){const row=document.createElement('tr');for(const value of [day.dt,day.day,day.min,day.max,day.sunrise,day.sunset]){const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell);}document.getElementById('daily').appendChild(row);}
+  status.textContent='조회가 완료됐습니다.';
+ }catch(error){status.textContent=error.name==='TimeoutError'?'응답 시간이 초과됐습니다. 다시 조회해 주세요.':error.message;}finally{button.disabled=false;}
+}
+form.addEventListener('submit',loadWeather);loadWeather();
+</script></body></html>

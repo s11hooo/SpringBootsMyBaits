@@ -5,6 +5,8 @@ import kopo.poly2.mapper.iNoticeMapper;
 import kopo.poly2.service.iNoticeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ public class NoticeService implements iNoticeService {
     private final iNoticeMapper noticeMapper;
 
     @Override
+    @Cacheable(cacheNames = "notice")
     public List<NoticeDTO> getNoticeList() throws Exception {
         log.info("{}.getNoticeList Start!", this.getClass().getName());
         return noticeMapper.getNoticeList();
@@ -44,6 +47,7 @@ public class NoticeService implements iNoticeService {
 
     @Transactional
     @Override
+    @CacheEvict(cacheNames = "notice", allEntries = true)
     public void insertNoticeInfo(NoticeDTO pDTO) throws Exception {
         log.info("{}.insertNoticeInfo Start!", this.getClass().getName());
         noticeMapper.insertNoticeInfo(pDTO);
@@ -51,6 +55,7 @@ public class NoticeService implements iNoticeService {
 
     @Transactional
     @Override
+    @CacheEvict(cacheNames = "notice", allEntries = true)
     public void updateNoticeInfo(NoticeDTO pDTO) throws Exception {
         log.info("{}.updateNoticeInfo Start!", this.getClass().getName());
         noticeMapper.updateNoticeInfo(pDTO);
@@ -58,6 +63,7 @@ public class NoticeService implements iNoticeService {
 
     @Transactional
     @Override
+    @CacheEvict(cacheNames = "notice", allEntries = true)
     public void deleteNoticeInfo(NoticeDTO pDTO) throws Exception {
         log.info("{}.deleteNoticeInfo Start!", this.getClass().getName());
         noticeMapper.deleteNoticeInfo(pDTO);

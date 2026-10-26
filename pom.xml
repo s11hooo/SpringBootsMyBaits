@@ -32,6 +32,15 @@
         <lombok.version>1.18.38</lombok.version>
     </properties>
     <dependencies>
+        <!-- Spring Cache + Ehcache 3 (JCache provider) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>

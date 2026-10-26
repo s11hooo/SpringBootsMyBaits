@@ -1,5 +1,7 @@
 package kopo.poly2.dto;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +14,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NoticeDTO {
+public class NoticeDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String noticeSeq;   // 기본키, 순번
     private String title;       // 제목
